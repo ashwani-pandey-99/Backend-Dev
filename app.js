@@ -1,37 +1,50 @@
 const express = require("express");
+const fs = require("fs");
+const path = require("path");
+
 const app = express();
 
 /* =========================
    MIDDLEWARE
 ========================= */
-// must be before routes
 app.use(express.json());
 
 /* =========================
-   DATA
+   FILE PATH
 ========================= */
-let students = [
-  { id: 1, name: "ANUBHAV", branch: "ECE", address: "Delhi" },
-  { id: 2, name: "ASHWANI", branch: "CSE", address: "UP" }
-];
+const filePath = path.join(__dirname, "students.json");
+
+/* =========================
+   HELPER FUNCTIONS
+========================= */
+function readStudents() {
+  const data = fs.readFileSync(filePath, "utf-8");
+  return JSON.parse(data);
+}
+
+function writeStudents(data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+}
 
 /* =========================
    ROUTES
 ========================= */
 
-// Home route
+// Home
 app.get("/", (req, res) => {
   res.send("Welcome to Student API 🚀");
 });
 
 // GET all students
 app.get("/students", (req, res) => {
+  const students = readStudents();
   res.json(students);
 });
 
-// GET student by ID (PARAM)
+// GET student by ID
 app.get("/student/:id", (req, res) => {
   const id = Number(req.params.id);
+  const students = readStudents();
 
   const student = students.find(s => s.id === id);
 
@@ -42,14 +55,14 @@ app.get("/student/:id", (req, res) => {
   res.json(student);
 });
 
-// GET students by branch (QUERY)
+// GET students by branch
 app.get("/search/student", (req, res) => {
   const branch = req.query.branch;
-
   if (!branch) {
     return res.status(400).json({ message: "Please provide branch query" });
   }
 
+  const students = readStudents();
   const result = students.filter(
     s => s.branch.toLowerCase() === branch.toLowerCase()
   );
@@ -63,24 +76,23 @@ app.get("/search/student", (req, res) => {
 
 // POST add new student
 app.post("/student", (req, res) => {
-  // safe destructuring
-  const { id, name, branch, address } = req.body || {};
+  const { id, name, branch, address } = req.body;
 
-  // validation
   if (!id || !name || !branch || !address) {
     return res.status(400).json({
       message: "id, name, branch and address are required"
     });
   }
 
-  // check duplicate id
+  const students = readStudents();
+
   const exists = students.find(s => s.id === id);
   if (exists) {
     return res.status(409).json({ message: "Student ID already exists" });
   }
 
-  // add student
   students.push({ id, name, branch, address });
+  writeStudents(students);
 
   res.status(201).json({
     message: "Student added successfully",
