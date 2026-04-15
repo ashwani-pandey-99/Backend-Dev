@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Contact Form</title>
+</head>
+<body>
+  <h1>Contact Us</h1>
+
+  <% if (success) { %>
+    <p>Your message has been received.</p>
+    <dl>
+      <dt>Name</dt>
+      <dd><%= form.name %></dd>
+      <dt>Email</dt>
+      <dd><%= form.email %></dd>
+      <dt>Message</dt>
+      <dd><%= form.message %></dd>
+    </dl>
+  <% } %>
+
+  <form method="post" action="/contact">
+    <div>
+      <label>Name:<br />
+        <input type="text" name="name" value="<%= form.name || '' %>" />
+      </label>
+    </div>
+    <div>
+      <label>Email:<br />
+        <input type="email" name="email" value="<%= form.email || '' %>" />
+      </label>
+    </div>
+    <div>
+      <label>Message:<br />
+        <textarea name="message"><%= form.message || '' %></textarea>
+      </label>
+    </div>
+    <button type="submit">Send Message</button>
+  </form>
+
+  <p><a href="/">Back to home</a></p>
+</body>
+</html>

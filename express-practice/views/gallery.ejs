@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Photo Gallery</title>
+</head>
+<body>
+  <h1>Photo Gallery</h1>
+
+  <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+    <% images.forEach((image) => { %>
+      <div style="width: 200px;">
+        <img src="/public/images/<%= image %>" alt="Gallery image" style="width: 100%; height: auto;" />
+        <p><%= image %></p>
+      </div>
+    <% }) %>
+  </div>
+
+  <p><a href="/">Back to home</a></p>
+</body>
+</html>
